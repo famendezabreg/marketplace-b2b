@@ -1,0 +1,19 @@
+﻿# Node.js
+node_modules/
+dist/
+coverage/
+*.log
+
+# Env
+.env
+.env.*
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*.cache
+*.tmp
