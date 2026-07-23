@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ink — navy profundo, superficie de sidebar y texto principal */
+  --color-ink-950: #0d1220;
+  --color-ink-900: #171f35;
+  --color-ink-800: #1d2540;
+  --color-ink-700: #2a3352;
+  --color-ink-500: #5b6478;
+  --color-ink-300: #9aa1b3;
+
+  /* Paper — fondo calido neutro, no crema-clasico */
+  --color-paper-100: #f5f5f1;
+  --color-paper-50: #fcfcfa;
+  --color-paper-200: #e9e8e1;
+  --color-paper-300: #d8d6cb;
+
+  /* Signage — ambar de senalizacion de bodega, el acento unico */
+  --color-signage-400: #e3b862;
+  --color-signage-500: #d9a441;
+  --color-signage-600: #b8842a;
+  --color-signage-700: #8f651e;
+
+  /* Roles: proveedor = signage (ambar), comprador = dock (teal), admin = ink */
+  --color-dock-400: #4a9c8e;
+  --color-dock-500: #2f7a6e;
+  --color-dock-600: #235e55;
+
+  /* Estado — apagados, nunca semaforo saturado */
+  --color-ok-500: #5e8a5e;
+  --color-ok-600: #486b48;
+  --color-alert-500: #a6483b;
+  --color-alert-600: #86392e;
+
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+html {
+  font-family: var(--font-body);
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-paper-100);
+  color: var(--color-ink-900);
+}
+
+/* Manifiesto: cabeceras condensadas mayusculas, tracking amplio — la firma tipografica */
+.font-manifest {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Numeros de ledger: IDs, montos, cantidades siempre en monoespaciada */
+.font-ledger {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background-color: var(--color-signage-400);
+  color: var(--color-ink-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signage-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============ Refinamiento editorial ============ */
+
+/* Octagono de sello, usado en el wordmark y en el sello de estado */
+.clip-octagon {
+  clip-path: polygon(
+    30% 0%,
+    70% 0%,
+    100% 30%,
+    100% 70%,
+    70% 100%,
+    30% 100%,
+    0% 70%,
+    0% 30%
+  );
+}
+
+/* Textura de bitacora: renglones sutiles, solo sobre fondos claros */
+.bg-ledger-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 27px,
+    rgba(13, 18, 32, 0.05) 27px,
+    rgba(13, 18, 32, 0.05) 28px
+  );
+}
+
+/* Marcas de registro en las esquinas, para tarjetas sobre fondo oscuro */
+.corner-marks {
+  position: relative;
+}
+.corner-marks::before,
+.corner-marks::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  opacity: 0.8;
+}
+.corner-marks::before {
+  top: 8px;
+  left: 8px;
+  border-top: 2px solid var(--color-signage-500);
+  border-left: 2px solid var(--color-signage-500);
+}
+.corner-marks::after {
+  bottom: 8px;
+  right: 8px;
+  border-bottom: 2px solid var(--color-signage-500);
+  border-right: 2px solid var(--color-signage-500);
+}
+
+/* Sello tipo timbre aduanal, superpuesto sobre un panel con position:relative */
+.customs-stamp {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  transform: rotate(-10deg);
+  border: 3px double currentColor;
+  padding: 4px 10px;
+  opacity: 0.85;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Borde punteado para estados vacios, tono bitacora */
+.folio-dashed {
+  border: 1px dashed var(--color-paper-300);
+}

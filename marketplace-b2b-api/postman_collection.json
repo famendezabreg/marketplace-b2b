@@ -1,0 +1,718 @@
+{
+  "info": {
+    "name": "Marketplace B2B API",
+    "description": "Flujo completo: registro -> catalogo -> cotizacion -> orden -> liquidacion. Los tokens e IDs se guardan automaticamente entre pasos (scripts en cada request), no requiere copiar/pegar nada manualmente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "providerToken",
+      "value": ""
+    },
+    {
+      "key": "buyerToken",
+      "value": ""
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "providerId",
+      "value": ""
+    },
+    {
+      "key": "buyerId",
+      "value": ""
+    },
+    {
+      "key": "commissionCategoryId",
+      "value": ""
+    },
+    {
+      "key": "productId",
+      "value": ""
+    },
+    {
+      "key": "quoteRequestId",
+      "value": ""
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "settlementId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01. Auth",
+      "item": [
+        {
+          "name": "Registrar Proveedor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var data = pm.response.json();",
+                  "  pm.collectionVariables.set('providerToken', data.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"proveedor@demo.com\",\n  \"password\": \"Proveedor123\",\n  \"role\": \"proveedor\",\n  \"companyName\": \"Distribuidora ACME S.A.\",\n  \"taxId\": \"0614-123456-001-2\",\n  \"phone\": \"+503 7000-0000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar Comprador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var data = pm.response.json();",
+                  "  pm.collectionVariables.set('buyerToken', data.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"comprador@demo.com\",\n  \"password\": \"Comprador123\",\n  \"role\": \"comprador\",\n  \"companyName\": \"Comercial Los Andes\",\n  \"taxId\": \"0614-654321-002-1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var data = pm.response.json();",
+                  "  pm.collectionVariables.set('adminToken', data.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@demo.com\",\n  \"password\": \"Admin123456\",\n  \"role\": \"admin\",\n  \"companyName\": \"Marketplace Admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Proveedor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('providerToken', data.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"proveedor@demo.com\",\n  \"password\": \"Proveedor123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Comprador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('buyerToken', data.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"comprador@demo.com\",\n  \"password\": \"Comprador123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('adminToken', data.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@demo.com\",\n  \"password\": \"Admin123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mi perfil de proveedor (/providers/me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data && data.id) { pm.collectionVariables.set('providerId', data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/providers/me"
+          }
+        },
+        {
+          "name": "Mi perfil de comprador (/buyers/me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data && data.id) { pm.collectionVariables.set('buyerId', data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/buyers/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Commission Categories (admin)",
+      "item": [
+        {
+          "name": "Crear categoria de comision",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var data = pm.response.json();",
+                  "  pm.collectionVariables.set('commissionCategoryId', data.id);",
+                  "} else if (pm.response.code === 409) {",
+                  "  pm.sendRequest({",
+                  "    url: pm.collectionVariables.get('baseUrl') + '/commission-categories',",
+                  "    method: 'GET',",
+                  "    header: { Authorization: 'Bearer ' + pm.collectionVariables.get('adminToken') }",
+                  "  }, function (err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "      var categories = res.json();",
+                  "      var existing = categories.find(function(c) { return c.name === 'Materiales de construccion'; });",
+                  "      if (existing) { pm.collectionVariables.set('commissionCategoryId', existing.id); }",
+                  "    }",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/commission-categories",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Materiales de construccion\",\n  \"commissionPercentage\": 8.5\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar categorias",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/commission-categories"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Products (proveedor)",
+      "item": [
+        {
+          "name": "Crear producto con rangos de precio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('productId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Varilla de acero corrugado 3/8\\\"\",\n  \"description\": \"Varilla de acero corrugado grado 60, 6 metros\",\n  \"basePrice\": 8.75,\n  \"totalStock\": 5000,\n  \"commissionCategoryId\": \"{{commissionCategoryId}}\",\n  \"priceRanges\": [\n    { \"minQuantity\": 1, \"maxQuantity\": 99, \"unitPrice\": 8.75 },\n    { \"minQuantity\": 100, \"maxQuantity\": 499, \"unitPrice\": 7.9 },\n    { \"minQuantity\": 500, \"maxQuantity\": null, \"unitPrice\": 6.95 }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar productos (catalogo)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/products"
+          }
+        },
+        {
+          "name": "Listar solo mis productos (?providerId=)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/products?providerId={{providerId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Flujo de Cotizacion",
+      "item": [
+        {
+          "name": "1. Comprador solicita cotizacion",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('quoteRequestId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/quotes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"requestedQuantity\": 150,\n  \"notes\": \"Necesito entrega la proxima semana\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2. Proveedor responde (precio automatico)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/quotes/{{quoteRequestId}}/respond",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"providerNotes\": \"Precio calculado segun volumen\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3. Comprador acepta (genera orden automaticamente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('orderId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/quotes/{{quoteRequestId}}/accept"
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Flujo de Orden",
+      "item": [
+        {
+          "name": "Ver orden generada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/orders/{{orderId}}"
+          }
+        },
+        {
+          "name": "Proveedor confirma orden (descuenta stock)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"confirmada\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Proveedor marca en preparacion",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"en_preparacion\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Proveedor marca despachada",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"despachada\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Proveedor marca recibida (completa el ciclo)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"recibida\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Liquidacion (admin)",
+      "item": [
+        {
+          "name": "Generar liquidacion del periodo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('settlementId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/settlements",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"providerId\": \"{{providerId}}\",\n  \"periodStart\": \"2020-01-01\",\n  \"periodEnd\": \"2030-01-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Ver liquidacion generada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/settlements/{{settlementId}}"
+          }
+        },
+        {
+          "name": "Marcar liquidacion como pagada",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/settlements/{{settlementId}}/mark-paid"
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Directorios (admin)",
+      "item": [
+        {
+          "name": "Listar proveedores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/providers"
+          }
+        },
+        {
+          "name": "Listar compradores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/buyers"
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Eliminar cuenta (NO correr en la demo principal)",
+      "item": [
+        {
+          "name": "Desactivar mi cuenta de proveedor",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{providerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/providers/{{providerId}}"
+          }
+        },
+        {
+          "name": "Desactivar mi cuenta de comprador",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/buyers/{{buyerId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
